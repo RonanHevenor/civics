@@ -1,33 +1,13 @@
-import getTwitter from "./getTwitter.tsx";
 import "./index.css";
 import "./OfficeLine.tsx";
 import OfficeLine from "./OfficeLine.tsx";
-// import { CivicAPIData } from "./dataType.tsx";
+import { RepresentativeInfoResponse, Office, OfficeComplete } from "./types";
 import { useState, useEffect } from "react";
 
 function CivicsApp() {
-  type Office = {
-    name: string;
-    divisionId: string;
-    levels: string[];
-    roles: string[];
-    officialIndices: number[];
-  };
-
-  type OfficeComplete = {
-    name: string;
-    level: string;
-    officials: Official[];
-  };
-
-  type Official = {
-    name: string;
-    party: string;
-    phone: string;
-    link: string;
-  };
-
-  const [apiData, setFigures] = useState([]);
+  const [apiData, setFigures] = useState<RepresentativeInfoResponse | null>(
+    null
+  );
   const [isLoading, setLoading] = useState(false);
   const [address, setAddress] = useState("");
 
@@ -47,13 +27,14 @@ function CivicsApp() {
     }
   }, [address]);
 
-  const offices = apiData.offices?.map((office: Office) => {
+  const offices = apiData?.offices?.map((office: Office) => {
     const officials = office.officialIndices.map((index: number) => {
       return {
-        name: apiData.officials[index].name,
-        party: apiData.officials[index].party,
-        phone: apiData.officials[index].phones[0],
-        link: apiData.officials[index].urls[0],
+        name: apiData?.officials?.[index].name,
+        address: apiData?.officials?.[index].address,
+        party: apiData?.officials?.[index].party,
+        phones: apiData?.officials?.[index].phones,
+        urls: apiData?.officials?.[index].urls,
         // twitter: apiData.officials[index].channels.filter(getTwitter),
       };
     });
@@ -66,13 +47,15 @@ function CivicsApp() {
 
   console.log(offices);
 
-  const renderedOfficeComponents = offices?.map((office: OfficeComplete) => {
-    return (
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div>{OfficeLine(office)}</div>
-      </div>
-    );
-  });
+  const renderedOfficeComponents = offices?.map(
+    (office: OfficeComplete, index: number) => {
+      return (
+        <div key={index} style={{ display: "flex", flexDirection: "column" }}>
+          <OfficeLine office={office} />
+        </div>
+      );
+    }
+  );
 
   return (
     <div
@@ -102,8 +85,8 @@ function CivicsApp() {
               padding: "0px 100px",
             }}
           >
-            Enter your residential address, state, town, or zip code below to
-            find out who represents you in government!
+            Enter your residential address below to find out who represents you
+            in government!
           </h2>
         </div>
       ) : (
@@ -119,7 +102,8 @@ function CivicsApp() {
         }}
         onSubmit={(e) => {
           e.preventDefault();
-          setAddress(e.currentTarget.elements.address.value);
+          const addressInput = e.currentTarget.elements[0] as HTMLInputElement;
+          setAddress(addressInput.value);
         }}
       >
         <input

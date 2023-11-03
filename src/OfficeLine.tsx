@@ -1,36 +1,27 @@
-type OfficeComplete = {
-  name: string;
-  level: string;
-  officials: Official[];
-};
+// App.tsx
+import { OfficeComplete, Official } from "./types";
 
-type Official = {
-  name: string;
-  party: string;
-  phone: string;
-  link: string;
-  twitter: string;
-};
-
-function OfficeLine(office: OfficeComplete) {
-  const renderedOfficeOfficials = office.officials.map((official: Official) => {
-    return (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gridTemplateRows: "1fr",
-          justifyContent: "center",
-          alignContent: "center",
-        }}
-      >
-        <a href={official.link}>{official.name}</a>
-        <p>{official.party}</p>
-        <p>{official.phone}</p>
-        {/* <a href={official. */}
-      </div>
-    );
-  });
+function OfficeLine(props: { office: OfficeComplete }) {
+  const renderedOfficeOfficials = props.office.officials.map(
+    (official: Official) => {
+      return (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateRows: "1fr",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
+        >
+          <a href={official.urls[0]}>{official.name}</a>
+          <p>{official.party}</p>
+          <p>{official.phones}</p>
+          {/* <a href={official. */}
+        </div>
+      );
+    }
+  );
 
   return (
     <div
@@ -45,7 +36,7 @@ function OfficeLine(office: OfficeComplete) {
       }}
     >
       <p style={{ gridColumn: "1 / span 1", gridRow: "1 / span 1" }}>
-        {office.name}
+        {props.office.name}
       </p>
       <div
         style={{
