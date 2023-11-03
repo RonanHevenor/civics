@@ -34,7 +34,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn add
+      - name: Build
+        run: yarn build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
